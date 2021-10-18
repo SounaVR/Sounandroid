@@ -1,4 +1,4 @@
-const { CommandInteraction, MessageEmbed, Client } = require('discord.js');
+const { CommandInteraction, MessageEmbed, Client, Message } = require('discord.js');
 const ms = require('ms');
 
 module.exports = {
@@ -53,29 +53,29 @@ module.exports = {
         const Target = options.getMember("member");
         const Reason = options.getString("reason");
         const Duration = options.getString("duration");
-        const Mute = guild.roles.cache.get("897862389242941522");
+        const Mute = guild.roles.cache.get("899628186541903912");
 
         const Response = new MessageEmbed()
             .setColor("BLUE")
             .setAuthor("MUTE SYSTEM", guild.iconURL({ dynamic: true }));
 
         if (Target.id === member.id) {
-            Response.setDescription("⛔ You cannot mute yourself.");
+            Response.setDescription("⛔ Vous pouvez pas vous auto-mute.");
             return interaction.reply({ embeds: [Response] });
         }
 
         if (Target.roles.highest.position > member.roles.highest.position) {
-            Response.setDescription("⛔ You cannot mute someone with a superior role than you.");
+            Response.setDescription("⛔ Vous pouvez pas mute quelqu'un avec un rôle supérieur au votre.");
             return interaction.reply({ embeds: [Response] });
         }
 
         if (Target.permissions.has(this.permission)) {
-            Response.setDescription(`⛔ You cannot mute someone with the \`${this.permission}\` permission.`);
+            Response.setDescription(`⛔ Vous pouvez pas mute quelqu'un avec la permission \`${this.permission}\`.`);
             return interaction.reply({ embeds: [Response] });
         }
 
         if (!Mute) {
-            Response.setDescription(`⛔ The mute role was not found.`);
+            Response.setDescription(`⛔ Le rôle mute n'a pas été trouvé.`);
             return interaction.reply({ embeds: [Response] });
         }
 
@@ -83,12 +83,10 @@ module.exports = {
             new MessageEmbed()
                 .setColor("RED")
                 .setAuthor("MUTE SYSTEM", guild.iconURL({ dynamic: true }))
-                .setDescription(`You have been muted by ${member} in **${guild.name}**\nReasion: ${Reason}\nDuration: ${Duration}`)
-        ]}).catch(() => {
-            console.log(`Could not send the mute notice to ${Target.user.tag}.`);
-        });
+                .setDescription(`Vous avez été mute par ${member} dans **${guild.name}**\nRaison: ${Reason}\nDurée: ${Duration}`)
+        ]}).catch(() => { return; });
 
-        Response.setDescription(`Member: ${Target} | \`${Target.id}\` has been **muted**\nStaff: ${member} | \`${member.id}\`\nDuration: \`${Duration}\`\nReason: \`${Reason}\``)
+        Response.setDescription(`Member: ${Target} | \`${Target.id}\` a été **mute**\nPar: ${member} | \`${member.id}\`\nDurée: \`${Duration}\`\nRaison: \`${Reason}\``)
         interaction.reply({ embeds: [Response] });
 
         await Target.roles.add(Mute.id);
@@ -96,5 +94,13 @@ module.exports = {
             if (!Target.roles.cache.has(Mute.id)) return;
             await Target.roles.remove(Mute);
         }, ms(Duration));
+
+        const logEmbed = new MessageEmbed()
+            .setColor("RED")
+            .setAuthor("MUTE SYSTEM", guild.iconURL({ dynamic: true }))
+            .setDescription(`Member: ${Target} | \`${Target.id}\` a été **mute**\Par: ${member} | \`${member.id}\`\nDurée: \`${Duration}\`\nRaison: \`${Reason}\``)
+            .setTimestamp()
+
+        client.channels.cache.get("899629148065124434").send({ embeds: [logEmbed] });
     }
 }
