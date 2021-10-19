@@ -17,9 +17,9 @@ module.exports = async (client) => {
         }
 
         if (event.once) {
-            client.once(event.name, (...args) => event.execute(...args, client));
+            client.once(event.name, (...args) => event.execute(client, ...args));
         } else {
-            client.on(event.name, (...args) => event.execute(...args, client));
+            client.on(event.name, (...args) => event.execute(client, ...args));
         };
 
         await Table.addRow(event.name, "✔ SUCCESSFUL");

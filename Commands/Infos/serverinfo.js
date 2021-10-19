@@ -5,7 +5,6 @@ const { checkDays } = require('../../utils/function');
 module.exports = {
     name: "serverinfo",
     description: "Displays the actual server informations",
-    category: "Infos",
     /**
      * @param {CommandInteraction} interaction
      * @param {Client} client

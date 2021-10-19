@@ -5,14 +5,14 @@ module.exports = {
     /**
      * @param {GuildMember} member 
      */
-    execute(member) {
+    execute(client, member) {
         const memberRole = member.guild.roles.cache.get("898319662675267625");
         member.roles.add(memberRole);
 
         const welcomeEmbed = new MessageEmbed()
             .setColor("RANDOM")
-            .setAuthor("WELCOME", member.user.displayAvatarURL({ dynamic: true }))
-            .setDescription(`Welcome ${member} to the **${member.guild.name}**'s discord server!\nLatest Member Count: **${member.guild.memberCount}**`)
+            .setAuthor("BIENVENUE !", member.user.displayAvatarURL({ dynamic: true }))
+            .setDescription(`Bienvenue ${member} sur le serveur **${member.guild.name}**!\nNombre de membre: **${member.guild.memberCount}**`)
             .setFooter(`${member.user.tag}`, member.user.displayAvatarURL({ dynamic: true }))
             .setTimestamp()
 

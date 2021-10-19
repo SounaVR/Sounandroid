@@ -1,5 +1,4 @@
-const { Perms } = require('../Validation/Permissions');
-const { Client } = require('discord.js');
+const { Client, Permissions } = require('discord.js');
 const { promisify } = require('util');
 const { glob } = require('glob');
 const PG = promisify(glob);
@@ -11,9 +10,7 @@ const Ascii = require('ascii-table');
 
 module.exports = async (client) => {
     const Table = new Ascii("Command Loaded");
-
     CommandsArray = [];
-
     (await PG(`${process.cwd()}/Commands/*/*.js`)).map(async (file) => {
         const command = require(file);
 
@@ -21,7 +18,7 @@ module.exports = async (client) => {
         if (!command.description) return Table.addRow(command.name, "🔴 FAILED", "Missing a description.");
 
         if (command.permission) {
-            if (Perms.includes(command.permission))
+            if(Object.keys(Permissions.FLAGS).includes(command.permission))
             command.defaultPermission = false;
             else
             return Table.addRow(command.name, "🔴 FAILED", "Permission is invalid.");

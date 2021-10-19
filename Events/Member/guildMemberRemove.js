@@ -5,7 +5,7 @@ module.exports = {
     /**
      * @param {GuildMember} member 
      */
-    execute(member) {
+    execute(client, member) {
         const logEmbed = new MessageEmbed()
             .setColor("RED")
             .setDescription(`${member} just left the server`)

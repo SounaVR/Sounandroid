@@ -1,7 +1,0 @@
-{
-    "UserNotRegistered" : "He's not registered.",
-    "NotRegistered" : "You are not registered, please do `z!register`.",
-    "uuid": 0,
-    "money": 0,
-    "lastDaily": 0
-}

@@ -7,7 +7,7 @@ module.exports = {
      * @param {CommandInteraction} interaction
      * @param {Client} client
      */
-    async execute(interaction, client) {
+    async execute(client, interaction) {
         if (interaction.isCommand()) {
             const command = client.commands.get(interaction.commandName);
             if (!command) return interaction.reply({ embeds: [
@@ -20,7 +20,7 @@ module.exports = {
 
             for (let option of interaction.options.data) {
                 if (option.type === 'SUB_COMMAND') {
-                    option.options?.foreach((x) => {
+                    option.options?.forEach((x) => {
                         if (x.value) arguments.push(option.value);
                     });
                 } else if (option.value) arguments.push(option.value);

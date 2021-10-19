@@ -6,7 +6,6 @@ const moment = require('moment');
 module.exports = {
     name: "botinfo",
     description: "Displays bot information",
-    category: "Infos",
     /**
      * @param {CommandInteraction} interaction
      * @param {Client} client
