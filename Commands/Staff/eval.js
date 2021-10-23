@@ -12,7 +12,7 @@ module.exports = {
             required: true
         }
     ],
-    async execute(interaction, client) {
+    async execute(interaction) {
         const code = interaction.options.getString("code");
         const clean = text => 
             typeof (text) === "string" ? text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203)) : text;

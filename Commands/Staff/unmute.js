@@ -2,18 +2,18 @@ const { CommandInteraction, MessageEmbed, Client } = require('discord.js');
 
 module.exports = {
     name: "unmute",
-    description: "To unmute someone",
+    description: "Pour démute quelqu'un",
     permission: "MUTE_MEMBERS",
     options: [
         {
-            name: "member",
-            description: "Select a member",
+            name: "membre",
+            description: "Sélectionnez un membre",
             type: "USER",
             required: true
         },
         {
-            name: "reason",
-            description: "Provide a reason",
+            name: "raison",
+            description: "Fournissez une raison",
             type: "STRING",
             required: false
         }
@@ -25,51 +25,51 @@ module.exports = {
     async execute(interaction, client) {
         const { guild, member, options } = interaction;
 
-        const Target = options.getMember("member");
-        const Reason = options.getString("reason") || "Aucune.";
-        const Mute = guild.roles.cache.get("899628186541903912");
+        const target = options.getMember("membre");
+        const reason = options.getString("raison") || "Aucune.";
+        const mute = guild.roles.cache.get("899628186541903912");
 
-        const Response = new MessageEmbed()
+        const response = new MessageEmbed()
             .setColor("BLUE")
-            .setAuthor("MUTE SYSTEM", guild.iconURL({ dynamic: true }));
+            .setAuthor("Système de mute", guild.iconURL({ dynamic: true }));
 
-        if (Target.id === member.id) {
-            Response.setDescription("⛔ Vous pouvez pas vous auto-unmute.");
-            return interaction.reply({ embeds: [Response] });
+        if (target.id === member.id) {
+            response.setDescription("⛔ Vous pouvez pas vous auto-unmute.");
+            return interaction.reply({ embeds: [response] });
         }
 
-        if (Target.roles.highest.position > member.roles.highest.position) {
-            Response.setDescription("⛔ Vous pouvez pas unmute quelqu'un avec un rôle supérieur au votre.");
-            return interaction.reply({ embeds: [Response] });
+        if (target.roles.highest.position > member.roles.highest.position) {
+            response.setDescription("⛔ Vous pouvez pas unmute quelqu'un avec un rôle supérieur au votre.");
+            return interaction.reply({ embeds: [response] });
         }
 
-        if (Target.permissions.has(this.permission)) {
-            Response.setDescription(`⛔ Vous pouvez pas unmute quelqu'un avec la permission \`${this.permission}\`.`);
-            return interaction.reply({ embeds: [Response] });
+        if (target.permissions.has(this.permission)) {
+            response.setDescription(`⛔ Vous pouvez pas unmute quelqu'un avec la permission \`${this.permission}\`.`);
+            return interaction.reply({ embeds: [response] });
         }
 
-        if (!Mute) {
-            Response.setDescription(`⛔ Le rôle mute n'a pas été trouvé.`);
-            return interaction.reply({ embeds: [Response] });
+        if (!mute) {
+            response.setDescription(`⛔ Le rôle mute n'a pas été trouvé.`);
+            return interaction.reply({ embeds: [response] });
         }
 
-        Target.send({ embeds: [
+        target.send({ embeds: [
             new MessageEmbed()
                 .setColor("RED")
-                .setAuthor("MUTE SYSTEM", guild.iconURL({ dynamic: true }))
-                .setDescription(`Vous avez été unmute par ${member} dans **${guild.name}**\nRaison: ${Reason}`)
+                .setAuthor("Système de mute", guild.iconURL({ dynamic: true }))
+                .setDescription(`Vous avez été unmute par ${member} dans **${guild.name}**\nRaison: ${reason}`)
         ]}).catch(() => { return; });
 
-        Response.setDescription(`Membre: ${Target} | \`${Target.id}\` a été **unmute**\nPar: ${member} | \`${member.id}\`\nRaison: \`${Reason}\``)
-        interaction.reply({ embeds: [Response] });
+        response.setDescription(`Membre: ${target} | \`${target.id}\` a été **unmute**\nPar: ${member} | \`${member.id}\`\nRaison: \`${reason}\``)
+        interaction.reply({ embeds: [response] });
 
-        if (!Target.roles.cache.has(Mute.id)) return;
-        await Target.roles.remove(Mute);
+        if (!target.roles.cache.has(mute.id)) return;
+        await target.roles.remove(mute);
 
         const logEmbed = new MessageEmbed()
             .setColor("RED")
-            .setAuthor("MUTE SYSTEM", guild.iconURL({ dynamic: true }))
-            .setDescription(`Membre: ${Target} | \`${Target.id}\` a été **unmute**\Par: ${member} | \`${member.id}\`\nRaison: \`${Reason}\``)
+            .setAuthor("Système de mute", guild.iconURL({ dynamic: true }))
+            .setDescription(`Membre: ${target} | \`${target.id}\` a été **unmute**\Par: ${member} | \`${member.id}\`\nRaison: \`${reason}\``)
             .setTimestamp()
 
         client.channels.cache.get("899629148065124434").send({ embeds: [logEmbed] });

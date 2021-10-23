@@ -1,27 +1,26 @@
-const { CommandInteraction, MessageEmbed, Client } = require("discord.js");
+const { CommandInteraction, MessageEmbed } = require("discord.js");
 
 module.exports = {
     name: "avatar",
-    description: "Displays the profile picture of someone or you",
+    description: "Affiche la photo de profil de quelqu'un ou vous-même",
     options: [
         {
-            name: "target",
-            description: "Select a target.",
+            name: "membre",
+            description: "Sélectionnez un utilisateur.",
             type: "USER",
             required: true
         },
     ],
     /**
      * @param {CommandInteraction} interaction
-     * @param {Client} client
      */
-    async execute(interaction, client) {
-        const Target = interaction.options.getUser("target");
+    async execute(interaction) {
+        const target = interaction.options.getUser("target");
 
         const embed = new MessageEmbed()
             .setColor("GREEN")
-            .setImage(Target.avatarURL({ dynamic: true, size: 512 })) 
-            .setDescription("Profile picture of " + `${Target}`);
+            .setImage(target.avatarURL({ dynamic: true, size: 512 })) 
+            .setDescription("Photo de profil de " + `${target}`);
     
         interaction.reply({ embeds: [embed] })
     }

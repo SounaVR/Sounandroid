@@ -1,10 +1,10 @@
 const { CommandInteraction, Client, MessageEmbed } = require('discord.js');
-const moment = require('moment');
 const { checkDays } = require('../../utils/function');
+const moment = require('moment');
 
 module.exports = {
     name: "serverinfo",
-    description: "Displays the actual server informations",
+    description: "Affiche les informations actuelles du serveur",
     /**
      * @param {CommandInteraction} interaction
      * @param {Client} client
@@ -25,9 +25,9 @@ module.exports = {
 
         // verification levels for "guild.verificationLevel" field
         const verifLevels = {
-            "NONE": "None",
-            "LOW": "Low",
-            "MEDIUM": "Medium",
+            "NONE": "Aucun",
+            "LOW": "Faible",
+            "MEDIUM": "Moyen",
             "HIGH": "(╯°□°）╯︵  ┻━┻",
             "VERY_HIGH": "┻━┻ミヽ(ಠ益ಠ)ノ彡┻━┻"
         };
@@ -39,18 +39,18 @@ module.exports = {
         const embed = new MessageEmbed()
             .setColor("GREEN")
             .setThumbnail(guild.iconURL({ dynamic: true }))
-            .addField("📝 Name", guild.name)
-            .addField("👑 Owner", `${guildOwner}`)
-            .addField("🚀 Boosts", `Level : ${guild.premiumTier} | ${guild.premiumSubscriptionCount} boosts`, true)
-            .addField("✅ Verification Level", verifLevels[guild.verificationLevel], true)
-            .addField("🕒 Created at", `${creationDate}\n${checkDays(guild.createdAt)}`, true)
-            .addField("👥 Member Status", presenceString)
-            .addField("🤖 Bots", guild.members.cache.filter((member) => member.user.bot === true).size.toString(), true)
-            .addField("📜 Roles", guild.roles.cache.filter((role) => role.name != "@everyone").size.toString(), true)
-            .addField("☺ Emoji Count", guild.emojis.cache.size.toString(), true)
-            .addField("📂 Categories", channelCache.filter((channel) => channel.type === "GUILD_CATEGORY").size.toString(), true)
-            .addField("💬 Text Channels", channelCache.filter((channel) => channel.type === "GUILD_TEXT").size.toString(), true)
-            .addField("📣 Voice Channels", channelCache.filter((channel) => channel.type === "GUILD_VOICE").size.toString(), true)
+            .addField("📝 Nom", guild.name)
+            .addField("👑 Preaupryaitères", `${guildOwner}`)
+            .addField("🚀 Boosts", `Niveau : ${guild.premiumTier} | ${guild.premiumSubscriptionCount} boosts`, true)
+            .addField("✅ Niveau de vérification", verifLevels[guild.verificationLevel], true)
+            .addField("🕒 Date de création", `${creationDate}\n${checkDays(guild.createdAt)}`, true)
+            .addField("👥 Status de membre", presenceString)
+            .addField("🤖", `**Bots** : ${guild.members.cache.filter((member) => member.user.bot === true).size.toString()}`, true)
+            .addField("📜", `**Rôles** : ${guild.roles.cache.filter((role) => role.name != "@everyone").size.toString()}`, true)
+            .addField("☺", `**Nombre d'emojis** : ${guild.emojis.cache.size.toString()}`, true)
+            .addField("📂", `**Catégories** : ${channelCache.filter((channel) => channel.type === "GUILD_CATEGORY").size.toString()}`, true)
+            .addField("💬", `**Salons textuels** : ${channelCache.filter((channel) => channel.type === "GUILD_TEXT").size.toString()}`, true)
+            .addField("📣", `**Salons vocaux** : ${channelCache.filter((channel) => channel.type === "GUILD_VOICE").size.toString()}`, true)
             .setFooter(`${client.user.username}`, client.user.avatarURL({ dynamic: true }))
             .setTimestamp()
 

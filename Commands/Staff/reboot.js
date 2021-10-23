@@ -11,6 +11,7 @@ module.exports = {
      */
     async execute(interaction, client) {
         interaction.reply({ content:"⚙ Redémarrage en cours...", ephemeral: true }).then(() => {
+            client.user.setActivity("processing reboot...", { type: "WATCHING" })
             process.exit();
         });
     }

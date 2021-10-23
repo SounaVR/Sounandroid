@@ -1,16 +1,13 @@
-const { CommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, MessageAttachment } = require('discord.js');
 
 module.exports = {
     name: "ping",
-    description: "Displays the bot latency",
+    description: "Affiche la latence du bot",
     /**
      * @param {CommandInteraction} interaction
      */
-    execute(interaction, client) {
-        interaction.reply({ embeds: [
-            new MessageEmbed()
-                .setColor("GREEN")
-                .setDescription(`🏓 ${client.ws.ping}ms`)
-        ]});
+    async execute(interaction, client) {
+        const file = new MessageAttachment('./utils/assets/cat-ping.gif');
+        interaction.reply({ content: `${client.ws.ping}ms.`, files: [file] })
     }
 }

@@ -1,25 +1,26 @@
-const { Client, CommandInteraction, MessageEmbed } = require('discord.js');
-const db = require('../../utils/Models/warningDB');
+const { CommandInteraction, MessageEmbed } = require('discord.js');
+const db = require('../../utils/Models/infractions');
+const moment = require('moment');
 
 module.exports = {
     name: "warnings",
-    description: "To warn someone before mute or ban.",
+    description: "Pour avertir quelqu'un avant le mute ou le ban",
     permission: "ADMINISTRATOR",
     options: [
         {
             name: "add",
-            description: "Adds a warning.",
+            description: "Ajoute un warning",
             type: "SUB_COMMAND",
             options: [
                 {
-                    name: "target",
-                    description: "Select a target.",
+                    name: "cible",
+                    description: "Sélectionnez une cible",
                     type: "USER",
                     required: true
                 },
                 {
-                    name: "reason",
-                    description: "Provide a reason.",
+                    name: "raison",
+                    description: "Fournissez une raison",
                     type: "STRING",
                     required: true
                 }
@@ -27,12 +28,12 @@ module.exports = {
         },
         {
             name: "check",
-            description: "Checks the warnings.",
+            description: "Affiche les avertissements",
             type: "SUB_COMMAND",
             options: [
                 {
-                    name: "target",
-                    description: "Select a target.",
+                    name: "cible",
+                    description: "Sélectionnez une cible",
                     type: "USER",
                     required: true
                 }
@@ -40,18 +41,18 @@ module.exports = {
         },
         {
             name: "remove",
-            description: "Removes a specific warning.",
+            description: "Supprime un avertissement spécifique",
             type: "SUB_COMMAND",
             options: [
                 {
-                    name: "target",
-                    description: "Select a target.",
+                    name: "cible",
+                    description: "Sélectionnez une cible",
                     type: "USER",
                     required: true
                 },
                 {
                     name: "warnid",
-                    description: "Provide the warning ID.",
+                    description: "Fournissez l'ID du warn",
                     type: "NUMBER",
                     required: true
                 }
@@ -59,12 +60,12 @@ module.exports = {
         },
         {
             name: "clear",
-            description: "Clears all warnings.",
+            description: "Supprime tout les avertissements",
             type: "SUB_COMMAND",
             options: [
                 {
-                    name: "target",
-                    description: "Select a target.",
+                    name: "cible",
+                    description: "Sélectionnez une cible",
                     type: "USER",
                     required: true
                 }
@@ -72,18 +73,17 @@ module.exports = {
         }
     ],
     /**
-     * @param {CommandInteraction} interaction 
-     * @param {Client} client 
+     * @param {CommandInteraction} interaction
      */
-    async execute(interaction, client) {
+    async execute(interaction) {
         const { options } = interaction;
         const sub = options.getSubcommand();
-        const target = options.getMember("target");
-        const reason = options.getString("reason");
-        const warnID = options.getNumber("warnid") - 1; 
-        const warnDate = new Date(interaction.createdTimestamp).toLocaleDateString();
+        const target = options.getMember("cible");
+        const reason = options.getString("raison");
+        const warnID = options.getNumber("warnid") - 1;
+        const warnDate = moment.utc(interaction.createdAt).format("DD/MM/YYYY");
         const warnEmbed = new MessageEmbed()
-            .setTitle("WARNING SYSTEM")
+            .setAuthor("Système d'avertissement", target.user.displayAvatarURL({ dynamic: true }))
             .setColor("RED")
 
         switch (sub) {
@@ -95,7 +95,7 @@ module.exports = {
                             GuildID: interaction.guildId,
                             UserID: target.id,
                             UserTag: target.user.tag,
-                            Content: [
+                            WarnData: [
                                 {
                                     ExecuterID: interaction.user.id,
                                     ExecuterTag: interaction.user.tag,
@@ -111,24 +111,24 @@ module.exports = {
                             Reason: reason,
                             Date: warnDate
                         }
-                        data.Content.push(obj)
-                    }
+                        data.WarnData.push(obj)
+                    };
                     data.save();
                 });
-                warnEmbed.setDescription(`Warning added: ${target.user.tag} | ${target.id}\n**Reason**: ${reason}`)
+                warnEmbed.setDescription(`Avertissement ajouté : ${target.user.tag} | ${target.id}\n**Raison**: ${reason}`);
                 interaction.reply({ embeds: [warnEmbed] });
                 break;
             case "check":
                 db.findOne({ GuildID: interaction.guildId, UserID: target.id, UserTag: target.user.tag }, async(err, data) => {
                     if (err) throw err;
-                    if (data?.Content.length > 0 && data) {
-                        warnEmbed.setDescription(`${data.Content.map(
-                            (w, i) => `**ID**: ${i + 1}\n**By**: ${w.ExecuterTag}\n**Date**: ${w.Date}\n**Reason**: ${w.Reason}
+                    if (data?.WarnData.length > 0 && data) {
+                        warnEmbed.setDescription(`${data.WarnData.map(
+                            (w, i) => `**ID**: ${i + 1}\n**Par**: ${w.ExecuterTag}\n**Date**: ${w.Date}\n**Raison**: ${w.Reason}
                             \n`
                         ).join(" ")}`);
                         interaction.reply({ embeds: [warnEmbed] });
                     } else {
-                        warnEmbed.setDescription(`${target.user.tag} | ${target.id} has no warnings.`);
+                        warnEmbed.setDescription(`${target.user.tag} | ${target.id} n'a pas d'avertissements.`);
                         interaction.reply({ embeds: [warnEmbed] });
                     };
                 });
@@ -137,12 +137,12 @@ module.exports = {
                 db.findOne({ GuildID: interaction.guildId, UserID: target.id, UserTag: target.user.tag }, async(err, data) => {
                     if (err) throw err;
                     if (data) {
-                        data.Content.splice(warnID, 1);
-                        warnEmbed.setDescription(`${target.user.tag}'s **Warning ID**: "${warnID + 1}" has been removed.`);
+                        data.WarnData.splice(warnID, 1);
+                        warnEmbed.setDescription(`${target.user.tag}'s **Warning ID**: "${warnID + 1}" a bien été supprimé.`);
                         interaction.reply({ embeds: [warnEmbed] });
                         data.save();
                     } else {
-                        warnEmbed.setDescription(`${target.user.tag} | ${target.id} has no warnings.`);
+                        warnEmbed.setDescription(`${target.user.tag} | ${target.id} n'a pas d'avertissements.`);
                         interaction.reply({ embeds: [warnEmbed] });
                     };
                 });
@@ -152,10 +152,11 @@ module.exports = {
                     if (err) throw err;
                     if (data) {
                         await db.findOneAndDelete({ GuildID: interaction.guildId, UserID: target.id, UserTag: target.user.tag });
-                        warnEmbed.setDescription(`${target.user.tag}'s warnings were cleared. | ${target.id}`);
+
+                        warnEmbed.setDescription(`Les avertissements de ${target.user.tag} | ${target.id} ont bien été supprimés.`);
                         interaction.reply({ embeds: [warnEmbed] });
                     } else {
-                        warnEmbed.setDescription(`${target.user.tag} | ${target.id} has no warnings.`);
+                        warnEmbed.setDescription(`${target.user.tag} | ${target.id} n'a pas d'avertissements.`);
                         interaction.reply({ embeds: [warnEmbed] });
                     };
                 });
