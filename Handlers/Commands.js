@@ -10,7 +10,9 @@ const Ascii = require('ascii-table');
 
 module.exports = async (client) => {
     const Table = new Ascii("Command Loaded");
+
     CommandsArray = [];
+
     (await PG(`${process.cwd()}/Commands/*/*.js`)).map(async (file) => {
         const command = require(file);
 
@@ -18,7 +20,7 @@ module.exports = async (client) => {
         if (command.type !== "USER" && !command.description) return Table.addRow(command.name, "🔴 FAILED", "Missing a description.");
 
         if (command.permission) {
-            if(Object.keys(Permissions.FLAGS).includes(command.permission))
+            if (Object.keys(Permissions.FLAGS).includes(command.permission))
             command.defaultPermission = false;
             else
             return Table.addRow(command.name, "🔴 FAILED", "Permission is invalid.");
@@ -37,25 +39,16 @@ module.exports = async (client) => {
         const MainGuild = await client.guilds.cache.get("885409367464214578");
 
         MainGuild.commands.set(CommandsArray).then(async (command) => {
-            const Roles = (commandName) => {
+            const roles = (commandName) => {
                 const cmdPerms = CommandsArray.find((c) => c.name === commandName).permission;
                 if (!cmdPerms) return null;
 
                 return MainGuild.roles.cache.filter((r) => r.permissions.has(cmdPerms) && !r.managed);
             }
 
-            const fullPermissions = command.reduce((accumulator, r) => {
-                const roles = Roles(r.name);
-                if (!roles) return accumulator;
+            const perms = command.map((r) => roles(r.name).size === 0 ? false : { id: r.id, permissions: roles(r.name).map(({ id }) => ({ id: id, type: "ROLE", permission: true })) }).filter(e => Boolean(e)); //tema la taille de la ligne
 
-                const permissions = roles.reduce((a, r) => {
-                    return [...a, { id: r.id, type: "ROLE", permission: true }];
-                }, []);
-
-                return [...accumulator, { id: r.id, permissions }];
-            }, []);
-
-            await MainGuild.commands.permissions.set({ fullPermissions });
+            await MainGuild.commands.permissions.set({ fullPermissions: perms });
         });
     });
 }
