@@ -15,7 +15,7 @@ module.exports = {
      * @param {CommandInteraction} interaction
      */
     async execute(interaction) {
-        const target = interaction.options.getUser("target");
+        const target = interaction.options.getUser("membre");
 
         const embed = new MessageEmbed()
             .setColor("GREEN")
