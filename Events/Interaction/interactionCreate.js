@@ -1,5 +1,4 @@
 const { Client, CommandInteraction, MessageEmbed } = require('discord.js');
-const { getPlayer, getUser } = require('../../utils/function');
 
 module.exports = {
     name: "interactionCreate",
@@ -26,7 +25,7 @@ module.exports = {
                 } else if (option.value) arguments.push(option.value);
             };
 
-            command.execute(interaction, client, getPlayer, getUser, arguments);
+            command.execute(interaction, client, arguments);
         }
     }
 }
