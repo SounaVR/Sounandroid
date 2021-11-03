@@ -1,4 +1,4 @@
-const { Client, Permissions } = require('discord.js');
+const { Client, Permissions, Collection } = require('discord.js');
 const { promisify } = require('util');
 const { glob } = require('glob');
 const PG = promisify(glob);
@@ -41,12 +41,12 @@ module.exports = async (client) => {
         MainGuild.commands.set(CommandsArray).then(async (command) => {
             const roles = (commandName) => {
                 const cmdPerms = CommandsArray.find((c) => c.name === commandName).permission;
-                if (!cmdPerms) return null;
+                if (!cmdPerms) return new Collection();
 
                 return MainGuild.roles.cache.filter((r) => r.permissions.has(cmdPerms) && !r.managed);
             }
 
-            const perms = command.map((r) => roles(r.name).size === 0 ? false : { id: r.id, permissions: roles(r.name).map(({ id }) => ({ id: id, type: "ROLE", permission: true })) }).filter(e => Boolean(e)); //tema la taille de la ligne
+            const perms = command.map((r) => roles(r.name).size === 0 ? false : { id: r.id, permissions: roles(r.name).map(({ id }) => ({ id: id, type: "ROLE", permission: true })) }).filter(e => Boolean(e));
 
             await MainGuild.commands.permissions.set({ fullPermissions: perms });
         });
