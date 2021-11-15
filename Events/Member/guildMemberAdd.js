@@ -6,6 +6,7 @@ module.exports = {
      * @param {GuildMember} member 
      */
     execute(client, member) {
+        if (member.guild.id !== "885409367464214578") return;
         const memberRole = member.guild.roles.cache.get("898319662675267625");
         member.roles.add(memberRole);
 
