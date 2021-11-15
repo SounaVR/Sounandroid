@@ -1,6 +1,5 @@
 require('moment-duration-format');
 const { CommandInteraction, MessageEmbed, Client } = require('discord.js');
-const { checkDays } = require('../../utils/function');
 const moment = require('moment');
 
 module.exports = {
@@ -12,8 +11,7 @@ module.exports = {
      */
     async execute(interaction, client) {
         const uptime = moment.duration(client.uptime).format("DD [days], HH [hrs], mm [mins], ss [secs]");
-        const creationDate = moment(client.user.createdAt).format("DD/MM/YYYY");
-        const developer = client.users.cache.find(user => user.id === "899618699743461386");
+        const developer = client.users.cache.find(user => user.id === "436310611748454401");
         const boticon = client.user.avatarURL();
         const embed = new MessageEmbed()
             .setAuthor(client.user.username, boticon)
@@ -30,7 +28,7 @@ module.exports = {
             .addField("👥 Utilisateurs", client.users.cache.size.toString(), true)
     
             .addField("📎 Mon lien", "[Clique pas](https://media.discordapp.net/attachments/706350683766390854/845538726162989076/3237789807_1_3_brmovBmI.png)", true)
-            .addField("🗓 Date de création", `${creationDate}\n${checkDays(client.user.createdAt)}`, true)
+            .addField("🗓 Date de création", `<t:${parseInt(client.user.createdTimestamp / 1000)}:R>`, true)
     
             .setFooter(client.user.username, client.user.avatarURL())
             .setTimestamp();
