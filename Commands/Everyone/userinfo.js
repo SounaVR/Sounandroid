@@ -1,23 +1,35 @@
-const { ContextMenuInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, MessageEmbed } = require('discord.js');
 
 module.exports = {
     name: "userinfo",
-    type: "USER",
+    description: "Affiche des informations sur un utilisateur.",
+    options: [
+        {
+            name: "membre",
+            description: "Sélectionnez un utilisateur",
+            type: "USER",
+            required: false
+        }
+    ],
     /**
-     * @param {ContextMenuInteraction} interaction
+     * @param {CommandInteraction} interaction
      */
     async execute(interaction) {
-        const target = await interaction.guild.members.fetch(interaction.targetId);
+        let target = interaction.options.getUser("membre");
+
+        if (!target) target = interaction.user;
+        const targetMember = await interaction.guild.members.fetch(target.id);
 
         const response = new MessageEmbed()
             .setColor("RANDOM")
-            .setAuthor(target.user.tag, target.user.displayAvatarURL({ dynamic: true, size: 512 }))
-            .setThumbnail(target.user.displayAvatarURL({ dynamic: true, size: 512 }))
-            .addField("ID", `${target.user.id}`)
-            .addField("Roles", `${target.roles.cache.map(r => r).join(" ").replace("@everyone", "") || "Aucun"}`)
-            .addField("Membre depuis", `<t:${parseInt(target.joinedTimestamp / 1000)}:R>`, true)
-            .addField("Utilisateur Discord depuis", `<t:${parseInt(target.user.createdTimestamp / 1000)}:R>`, true)
+            .setAuthor(target.tag, target.displayAvatarURL({ dynamic: true, size: 512 }))
+            .setThumbnail(target.displayAvatarURL({ dynamic: true, size: 512 }))
+            .addField("ID", `${target.id}`, true)
+            .addField("Nickname", `${targetMember.nickname != null ? `${targetMember.nickname}` : 'Aucun'}`, true)
+            .addField("Roles", `${targetMember.roles.cache.map(r => r).join(" ").replace("@everyone", "") || "Aucun"}`)
+            .addField("Membre depuis", `<t:${parseInt(targetMember.joinedTimestamp / 1000)}:R>`, true)
+            .addField("Utilisateur Discord depuis", `<t:${parseInt(target.createdTimestamp / 1000)}:R>`, true)
 
-        interaction.reply({ embeds: [response], ephemeral: true });
+        interaction.reply({ embeds: [response] });
     }
 }
