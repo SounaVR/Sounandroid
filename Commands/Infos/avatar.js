@@ -8,14 +8,15 @@ module.exports = {
             name: "membre",
             description: "Sélectionnez un utilisateur.",
             type: "USER",
-            required: true
+            required: false
         },
     ],
     /**
      * @param {CommandInteraction} interaction
      */
     async execute(interaction) {
-        const target = interaction.options.getUser("membre");
+        let target = interaction.options.getUser("membre");
+        if (!target) target = interaction.user;
 
         const embed = new MessageEmbed()
             .setColor("GREEN")
