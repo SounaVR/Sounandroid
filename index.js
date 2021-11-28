@@ -2,7 +2,7 @@ require('dotenv').config();
 const { BOT_TOKEN } = process.env;
 const { Client, Collection } = require('discord.js');
 
-const client = new Client({ intents: 771 });
+const client = new Client({ intents: 1799 });
 require('./Handlers/Events')(client);
 require('./Handlers/Commands')(client);
 
