@@ -1,4 +1,5 @@
 const { DBURL } = process.env;
+const roleClaim = require("../../utils/reactionRole/role-claim");
 const { Client } = require('discord.js');
 const mongoose = require('mongoose');
 
@@ -21,6 +22,9 @@ module.exports = {
 
         client.user.setActivity("les vidéos de Souna", { type: "WATCHING" });
         client.user.setStatus("dnd");
+
+        roleClaim(client);
+
         rdy.send(`✅ Bot connecté et prêt !`);
     }
 }
