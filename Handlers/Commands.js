@@ -29,14 +29,14 @@ module.exports = async (client) => {
         client.commands.set(command.name, command);
         CommandsArray.push(command);
 
-        await Table.addRow(command.name, "✔ SUCCESSFUL");
+        Table.addRow(command.name, "✔ SUCCESSFUL");
     });
 
     console.log(Table.toString());
 
     // PERMISSIONS CHECK //
     client.on("ready", async() => {
-        const MainGuild = await client.guilds.cache.get("885409367464214578");
+        const MainGuild = client.guilds.cache.get("885409367464214578");
 
         MainGuild.commands.set(CommandsArray).then(async (command) => {
             const roles = (commandName) => {
