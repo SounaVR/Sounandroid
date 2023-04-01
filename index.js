@@ -1,11 +1,6 @@
 require('dotenv').config();
-const { BOT_TOKEN } = process.env;
-const { Client, Collection } = require('discord.js');
+const Sounandroid = require('./Classes/Client');
 
-const client = new Client({ intents: 1799 });
-require('./Handlers/Events')(client);
-require('./Handlers/Commands')(client);
+const client = new Sounandroid();
 
-client.commands = new Collection();
-
-client.login(BOT_TOKEN);
+client.login(process.env.BOT_TOKEN);
