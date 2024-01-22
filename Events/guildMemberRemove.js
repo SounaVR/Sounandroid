@@ -8,6 +8,6 @@ module.exports = {
             .setDescription(`${member}/${member.user.username} just left the server`)
             .setTimestamp();
 
-        await member.guild.channels.cache.get("1091634192267346002").send({ embeds: [logEmbed] });
+        await member.guild.channels.cache.get("1065830709652103168").send({ embeds: [logEmbed] });
     }
 }
